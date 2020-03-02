@@ -2,8 +2,7 @@ class ProductList extends React.Component{
     constructor(){
         super();
         this.state = {products : []};
-        this.addProduct = this.addProduct.bind(this);
-        this.createProduct = this.createProduct.bind(this);
+        this.addProduct = this.addProduct.bind(this);        
     }
 
     componentDidMount(){
@@ -27,7 +26,7 @@ class ProductList extends React.Component{
         this.setState({products:responseResult.data.productList})
     }
 
-    async createProduct(newProduct) {        
+    async addProduct(newProduct) {        
         const newProducts = this.state.products.slice();
         newProduct.id = this.state.products.length + 1;        
         newProducts.push(newProduct);
@@ -48,12 +47,6 @@ class ProductList extends React.Component{
         this.loadData();
     }
     
-    addProduct(product){
-        product.id = this.state.products.length + 1;        
-        const newProductsList = this.state.products.slice();
-        newProductsList.push(product);
-        this.setState({products:newProductsList});
-    }
     
     render(){
         return(
@@ -63,7 +56,7 @@ class ProductList extends React.Component{
                 <hr/>
                 <ProductTable products = {this.state.products}/>
                 <hr/>
-                <ProductAdd addProduct = {this.createProduct}/>
+                <ProductAdd addProduct = {this.addProduct}/>
             </React.Fragment>
         )
     }

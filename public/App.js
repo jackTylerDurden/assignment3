@@ -5,7 +5,6 @@ class ProductList extends React.Component {
       products: []
     };
     this.addProduct = this.addProduct.bind(this);
-    this.createProduct = this.createProduct.bind(this);
   }
 
   componentDidMount() {
@@ -33,8 +32,7 @@ class ProductList extends React.Component {
     });
   }
 
-  async createProduct(newProduct) {
-    console.log("newProduct-----<<", newProduct);
+  async addProduct(newProduct) {
     const newProducts = this.state.products.slice();
     newProduct.id = this.state.products.length + 1;
     newProducts.push(newProduct);
@@ -61,20 +59,11 @@ class ProductList extends React.Component {
     this.loadData();
   }
 
-  addProduct(product) {
-    product.id = this.state.products.length + 1;
-    const newProductsList = this.state.products.slice();
-    newProductsList.push(product);
-    this.setState({
-      products: newProductsList
-    });
-  }
-
   render() {
     return React.createElement(React.Fragment, null, React.createElement("h1", null, "My Company Inventory"), React.createElement("h3", null, "Showing all available products"), React.createElement("hr", null), React.createElement(ProductTable, {
       products: this.state.products
     }), React.createElement("hr", null), React.createElement(ProductAdd, {
-      addProduct: this.createProduct
+      addProduct: this.addProduct
     }));
   }
 
