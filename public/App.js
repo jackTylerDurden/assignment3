@@ -5,6 +5,60 @@ class ProductList extends React.Component {
       products: []
     };
     this.addProduct = this.addProduct.bind(this);
+    this.createProduct = this.createProduct.bind(this);
+  }
+
+  componentDidMount() {
+    this.loadData();
+  }
+
+  async loadData() {
+    const query = `query{
+            productList{
+                id Name Price Image Category
+            }
+        }`;
+    const response = await fetch('/graphql', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        query
+      })
+    });
+    const responseResult = await response.json();
+    this.setState({
+      products: responseResult.data.productList
+    });
+  }
+
+  async createProduct(newProduct) {
+    console.log("newProduct-----<<", newProduct);
+    const newProducts = this.state.products.slice();
+    newProduct.id = this.state.products.length + 1;
+    newProducts.push(newProduct);
+    this.setState({
+      products: newProducts
+    });
+    const query = `mutation {
+            productAdd(product:{
+                Name: "${newProduct.productName}",
+                Price: ${newProduct.pricePerUnit},
+                Image: "${newProduct.imageUrl}",
+                Category: ${newProduct.category},
+            }) {id}
+        }`;
+    const response = await fetch('/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query
+      })
+    });
+    this.loadData();
   }
 
   addProduct(product) {
@@ -20,7 +74,7 @@ class ProductList extends React.Component {
     return React.createElement(React.Fragment, null, React.createElement("h1", null, "My Company Inventory"), React.createElement("h3", null, "Showing all available products"), React.createElement("hr", null), React.createElement(ProductTable, {
       products: this.state.products
     }), React.createElement("hr", null), React.createElement(ProductAdd, {
-      addProduct: this.addProduct
+      addProduct: this.createProduct
     }));
   }
 
@@ -61,17 +115,17 @@ class ProductRow extends React.Component {
     return React.createElement("tr", null, React.createElement("td", {
       align: "center",
       style: rowStyle
-    }, product.productName), React.createElement("td", {
+    }, product.Name), React.createElement("td", {
       align: "center",
       style: rowStyle
-    }, "$", product.pricePerUnit), React.createElement("td", {
+    }, "$", product.Price), React.createElement("td", {
       align: "center",
       style: rowStyle
-    }, product.category), React.createElement("td", {
+    }, product.Category), React.createElement("td", {
       align: "center",
       style: rowStyle
     }, React.createElement("a", {
-      href: product.imageUrl,
+      href: product.Image,
       target: "_blank"
     }, "View")));
   }
@@ -90,7 +144,7 @@ class ProductAdd extends React.Component {
     const price = form.pricePerUnit.value;
     const product = {
       category: form.category.value,
-      pricePerUnit: price.substring(1, price.length),
+      pricePerUnit: parseFloat(price.substring(1, price.length)),
       productName: form.productName.value,
       imageUrl: form.imageUrl.value
     };
