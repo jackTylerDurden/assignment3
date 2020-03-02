@@ -27,8 +27,7 @@ class ProductList extends React.Component{
         this.setState({products:responseResult.data.productList})
     }
 
-    async createProduct(newProduct) {
-        console.log("newProduct-----<<",newProduct);
+    async createProduct(newProduct) {        
         const newProducts = this.state.products.slice();
         newProduct.id = this.state.products.length + 1;        
         newProducts.push(newProduct);
